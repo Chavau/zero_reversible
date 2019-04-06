@@ -9,7 +9,6 @@ View::View(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->B_charger_fichier, SIGNAL(clicked()), this, SLOT(chemin_fichier()));
     connect(ui->B_ajouter, SIGNAL(clicked()), this, SLOT(ajouter_mot()));
 
     connect(ui->button_forward, SIGNAL(clicked()), this, SLOT(step_forward()));
@@ -21,11 +20,21 @@ View::View(QWidget *parent) :
 
 
 
-void View::setAlphabet(std::string alphabet){
+void View::setAlphabet(std::vector<char> alpha){
+    std::string alphabet = "";
+    for (char mot : alpha){
+        alphabet += mot;
+        alphabet += " ";
+    }
+
     ui->TE_alphabet->setPlainText(QString::fromStdString(alphabet));
 }
 
-void View::setDictionnaire(std::string dictionnaire){
+void View::setDictionnaire(std::vector<std::string> dict){
+    std::string dictionnaire = "";
+    for (std::string mot : dict){
+        dictionnaire += mot + "\n";
+    }
     ui->TE_dictionnaire->setPlainText(QString::fromStdString(dictionnaire));
 
 }
@@ -49,11 +58,6 @@ View::~View()
  *
  */
 
-std::string View::chemin_fichier(){
-    std::string texte;
-    texte = ui->LE_chemin_fichier->text().toUtf8().constData();
-    return texte;
-    }
 
 /*
  * cette fonction retourne le mot qu'elle ajoute pour pour l'ajouter au traitement
@@ -65,7 +69,7 @@ std::string View::ajouter_mot(){
     QString dictionnaire;
     dictionnaire = ui->TE_dictionnaire->toPlainText();
 
-    dictionnaire += "\n" + mot;
+    dictionnaire +=  mot;
     ui->TE_dictionnaire->setPlainText(dictionnaire);
 
     return mot.toUtf8().constData();

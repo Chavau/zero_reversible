@@ -3,46 +3,39 @@
 
 #include <iostream>
 #include <vector>
+#include <array>
+#include <string>
+#include <iterator>
+#include <tuple>
 
-class Arc;
-
-class Noeud{
-private :
-    static int id;
-    int _ID_;
-    bool final;
-    std::vector<Arc> arcs;
-
-public:
-    Noeud(bool _final_);
-    Noeud();
-};
-
-class Arc{
-private :
-    char symbole;
-    Noeud* destination;
-
-public :
-    Arc(char _symbole_, Noeud _dest_);
-};
 
 class Graphe{
     // le caractère § sert pour indiquer qu'il n'existe pas d'arc entre deux état
 private :
-    std::vector<std::vector<char> > matrice_adj;
-    Noeud initial;
+    std::vector<std::vector<std::vector<char> > > matrice_adj;
+    std::vector<char> alphabet;
+    std::vector<std::string> dictionaire;
+    std::vector<int> finals; //liste des états finaux
 
 public :
-    Graphe(Noeud racine);
-    bool checkDerterminisme();
-    bool checkUniqFinal();
-    bool checkZeroRever();
-    void fusionNoeud(Noeud& A,Noeud& B);
+    Graphe(std::vector<char>,std::vector<std::string>);
+    void affichage();
+    std::vector<std::tuple<int,int,char>> listeArc();
+    bool checkDerterminisme(std::vector<int>&);
+    bool checkUniqFinal(std::vector<int>&);
+    bool checkZeroRever(std::vector<int>&);
+    std::vector<std::vector<std::vector<char> > > fusionNoeud(std::vector<int>&);
+    std::vector<char> Union(std::vector<char>,std::vector<char>);
+    std::string affichageUI();
+
     void rendreZR();
 
 
 
+    std::vector<int> getFinals() const;
+    void setFinals(const std::vector<int> &value);
+    std::vector<std::vector<std::vector<char> > > getMatrice_adj() const;
+    void setMatrice_adj(const std::vector<std::vector<std::vector<char> > > &value);
 };
 
 #endif // GRAPHE_H
