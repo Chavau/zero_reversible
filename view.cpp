@@ -1,7 +1,9 @@
 #include "view.h"
 #include "ui_view.h"
 #include <iostream>
+#include <fstream>
 
+using namespace std;
 
 View::View(QWidget *parent) :
     QMainWindow(parent),
@@ -17,8 +19,6 @@ View::View(QWidget *parent) :
 
 
 }
-
-
 
 void View::setAlphabet(std::vector<char> alpha){
     std::string alphabet = "";
@@ -47,6 +47,36 @@ void View::setGraph(std::string chemin_fichier_png){
     ui->label_graph->setPixmap(image);
 }
 
+void View::set_obj_graphe(Graphe graphe){
+    this->graphe = graphe;
+    this->generer_graphe();
+}
+
+void View::generer_graphe(){
+    ofstream fichier("graph_test", ios::out | ios::trunc);
+    if(fichier)
+           {
+        fichier << "digraph g {" << endl;
+        //fichier << "size=\"8,5\";" << endl;
+        fichier << "rankdir=\"LR\";" << endl;
+        // if etat final
+        //fichier << "node [shape = doublecircle];2 A;" << endl;
+
+        //fichier << "node [shape = circle];" << endl;
+
+        //fichier << "A -> B [ label = \"bonjour\" ];" << endl;
+
+        fichier << this->graphe.affichageUI();
+        fichier << "}" << endl;
+        fichier.close();
+    }
+    system("dot -Tpng graph_test -o outfile.png");
+
+    this->setGraph("./outfile.png");
+
+}
+
+
 
 View::~View()
 {
@@ -60,30 +90,37 @@ View::~View()
 
 
 /*
- * cette fonction retourne le mot qu'elle ajoute pour pour l'ajouter au traitement
+ * cette fonction retourne le mot qu'elle ajoute pour l'ajouter au traitement
  */
-std::string View::ajouter_mot(){
+void View::ajouter_mot(){
     QString mot;
     mot = ui->LE_ajout_mot->text();
+    std::string test = mot.toUtf8().constData();
+    mot += "\n";
 
     QString dictionnaire;
     dictionnaire = ui->TE_dictionnaire->toPlainText();
 
     dictionnaire +=  mot;
     ui->TE_dictionnaire->setPlainText(dictionnaire);
+    this->graphe.dictionaire.push_back(test);
 
-    return mot.toUtf8().constData();
+    //this->generer_graphe();
+
 }
 
 void View::step_forward(){
-
+    this->graphe.rendreZR(1);
+    this->generer_graphe();
 }
 
 void View::step_backward(){
-
+    this->graphe = Graphe(this->graphe.alphabet, this->graphe.dictionaire);
+    this->generer_graphe();
 }
 
 void View::finish(){
-
+    this->graphe.rendreZR(999);
+    this->generer_graphe();
 }
 

@@ -6,29 +6,31 @@
 #include <array>
 #include <string>
 #include <iterator>
-#include <tuple>
-
 
 class Graphe{
     // le caractère § sert pour indiquer qu'il n'existe pas d'arc entre deux état
 private :
-    std::vector<std::vector<std::vector<char> > > matrice_adj;
-    std::vector<char> alphabet;
-    std::vector<std::string> dictionaire;
+    std::vector<std::vector<std::vector<char>>> matrice_adj;
     std::vector<int> finals; //liste des états finaux
 
 public :
+    std::vector<char> alphabet;
+    std::vector<std::string> dictionaire;
+
+
     Graphe(std::vector<char>,std::vector<std::string>);
+    Graphe();
     void affichage();
-    std::vector<std::tuple<int,int,char>> listeArc();
+    std::vector<std::tuple<int, int,char>> listeArc();
     bool checkDerterminisme(std::vector<int>&);
     bool checkUniqFinal(std::vector<int>&);
     bool checkZeroRever(std::vector<int>&);
     std::vector<std::vector<std::vector<char> > > fusionNoeud(std::vector<int>&);
     std::vector<char> Union(std::vector<char>,std::vector<char>);
     std::string affichageUI();
+    std::vector<std::vector<std::vector<char> > > doublon();
 
-    void rendreZR();
+    void rendreZR(int);
 
 
 
