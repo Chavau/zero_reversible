@@ -28,6 +28,26 @@ void Graphe::setMatrice_adj(const std::vector<std::vector<std::vector<char>>> &v
     matrice_adj = value;
 }
 
+std::vector<char> Graphe::getAlphabet() const
+{
+    return alphabet;
+}
+
+void Graphe::setAlphabet(const std::vector<char> &value)
+{
+    alphabet = value;
+}
+
+std::vector<string> Graphe::getDictionaire() const
+{
+    return dictionaire;
+}
+
+void Graphe::setDictionaire(const std::vector<std::string> &value)
+{
+    dictionaire = value;
+}
+
 Graphe::Graphe(std::vector<char> alphabet,std::vector<std::string> dictionaire){
     this->alphabet = alphabet;
     this->dictionaire = dictionaire;
@@ -46,10 +66,10 @@ Graphe::Graphe(std::vector<char> alphabet,std::vector<std::string> dictionaire){
             if(j==0){
                 etat++;
                 this->matrice_adj.at(0).at(etat)=Union(this->matrice_adj.at(0).at(etat),std::vector<char>(1,mot[j]));
-                this->matrice_adj.at(etat).at(0)=Union(this->matrice_adj.at(etat).at(0),std::vector<char>(1,mot[j]));
+                //this->matrice_adj.at(etat).at(0)=Union(this->matrice_adj.at(etat).at(0),std::vector<char>(1,mot[j]));
             }else{
                 this->matrice_adj.at(etat).at(etat+1)=Union(this->matrice_adj.at(etat).at(etat+1),std::vector<char>(1,mot[j]));
-                this->matrice_adj.at(etat+1).at(etat)=Union(this->matrice_adj.at(etat+1).at(etat),std::vector<char>(1,mot[j]));
+                //this->matrice_adj.at(etat+1).at(etat)=Union(this->matrice_adj.at(etat+1).at(etat),std::vector<char>(1,mot[j]));
                 etat++;
 
             }
@@ -66,12 +86,6 @@ Graphe::Graphe(std::vector<char> alphabet,std::vector<std::string> dictionaire){
         std::cout<<"arc "<<std::get<0>(elt)<<"->"<<std::get<1>(elt)<<std::endl;
     }
 
-}
-
-Graphe::Graphe(){
-    this->alphabet.clear();
-    this->dictionaire.clear();
-    this->matrice_adj.clear();
 }
 
 void Graphe::affichage()
@@ -114,7 +128,7 @@ std::vector<std::tuple<int, int, char>> Graphe::listeArc()
 {
     std::vector<std::tuple<int, int,char>> ret;
     for(int i = this->matrice_adj.size()-1;i>=0;i--)
-        for( int j = this->matrice_adj.size()-1;j>=1;j--)
+        for( int j = this->matrice_adj.size()-1;j>=0;j--)
             for( int d = 0;d<this->matrice_adj.at(i).at(j).size();d++){
                 if(this->matrice_adj.at(i).at(j).at(d)!='$')
                     ret.push_back(std::make_tuple(i,j,this->matrice_adj.at(i).at(j).at(d)));
@@ -204,15 +218,18 @@ std::vector<std::vector<std::vector<char>>> Graphe::fusionNoeud(std::vector<int>
                     ret.at(i).at(j).push_back(this->matrice_adj.at(i).at(j).at(d));
                     if(i==supp){
 
-                        ret.at(rece).at(j)=Union(this->matrice_adj.at(rece).at(j),this->matrice_adj.at(i).at(j));
-                        ret.at(j).at(rece)=Union(this->matrice_adj.at(j).at(rece),this->matrice_adj.at(j).at(i));
+                        ret.at(rece).at(j)=Union(ret.at(rece).at(j),this->matrice_adj.at(i).at(j));
+                        ret.at(j).at(rece)=Union(ret.at(j).at(rece),this->matrice_adj.at(j).at(i));
                     }
                 }
             }
         }
-        for(int i = 0;i<ret.at(rece).size();i++){
+
+ret.at(rece).at(rece)=Union(ret.at(rece).at(rece),ret.at(rece).at(supp));
+ret.at(rece).at(rece)=Union(ret.at(rece).at(rece),ret.at(supp).at(rece));
+        /*for(int i = 0;i<ret.at(rece).size();i++){
             ret.at(rece).at(i)=Union(ret.at(rece).at(i),ret.at(supp).at(i)); ;
-        }
+        }*/
         ret.erase(ret.begin()+supp);
         for(int i = 0;i<ret.at(0).size();i++){
             ret.at(i).erase(ret.at(i).begin()+supp);
@@ -331,4 +348,10 @@ void Graphe::rendreZR(int maxTour){
     compt++;
     noeudFusion.clear();
     }
+}
+
+Graphe::Graphe(){
+    this->alphabet.clear();
+    this->dictionaire.clear();
+    this->matrice_adj.clear();
 }

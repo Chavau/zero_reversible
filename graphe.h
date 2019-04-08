@@ -10,13 +10,12 @@
 class Graphe{
     // le caractère § sert pour indiquer qu'il n'existe pas d'arc entre deux état
 private :
+    std::vector<char> alphabet;
+    std::vector<std::string> dictionaire;
     std::vector<std::vector<std::vector<char>>> matrice_adj;
     std::vector<int> finals; //liste des états finaux
 
 public :
-    std::vector<char> alphabet;
-    std::vector<std::string> dictionaire;
-
 
     Graphe(std::vector<char>,std::vector<std::string>);
     Graphe();
@@ -38,6 +37,10 @@ public :
     void setFinals(const std::vector<int> &value);
     std::vector<std::vector<std::vector<char> > > getMatrice_adj() const;
     void setMatrice_adj(const std::vector<std::vector<std::vector<char> > > &value);
+    std::vector<char> getAlphabet() const;
+    void setAlphabet(const std::vector<char> &value);
+    std::vector<std::string> getDictionaire() const;
+    void setDictionaire(const std::vector<std::string> &value);
 };
 
 #endif // GRAPHE_H

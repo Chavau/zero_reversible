@@ -148,7 +148,7 @@ p, li { white-space: pre-wrap; }
         <item>
          <widget class="QPushButton" name="button_backward">
           <property name="text">
-           <string>Start again</string>
+           <string>Restart</string>
           </property>
          </widget>
         </item>

@@ -103,7 +103,9 @@ void View::ajouter_mot(){
 
     dictionnaire +=  mot;
     ui->TE_dictionnaire->setPlainText(dictionnaire);
-    this->graphe.dictionaire.push_back(test);
+    std::vector<string> tmp = this->graphe.getDictionaire();
+    tmp.push_back(test);
+    this->graphe.setDictionaire(tmp);
 
     //this->generer_graphe();
 
@@ -115,7 +117,7 @@ void View::step_forward(){
 }
 
 void View::step_backward(){
-    this->graphe = Graphe(this->graphe.alphabet, this->graphe.dictionaire);
+    this->graphe = Graphe(this->graphe.getAlphabet(), this->graphe.getDictionaire());
     this->generer_graphe();
 }
 
