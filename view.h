@@ -21,13 +21,15 @@ public:
     void setGraph(std::string chemin_fichier_png);
     void set_obj_graphe(Graphe graphe);
     void generer_graphe();
+    void maj_alphabet();
+    bool dans_alphabet(char car);
 
 private:
     Ui::View *ui;
 
 public slots:
      void ajouter_mot();
-
+     void clear();
      void step_forward();
      void step_backward();
      void finish();

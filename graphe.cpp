@@ -95,7 +95,8 @@ void Graphe::affichage()
             if(this->matrice_adj.at(i).at(j).size()>1){
                 std::cout << this->matrice_adj.at(i).at(j).at(1)<<"1";
             }else{
-            std::cout << this->matrice_adj.at(i).at(j).at(0)<<" ";
+                if(this->matrice_adj.at(i).at(j).size()>0)
+                    std::cout << this->matrice_adj.at(i).at(j).at(0)<<" ";
             }
         }
         std::cout << std::endl;
@@ -106,7 +107,8 @@ void Graphe::affichage()
             if(this->matrice_adj.at(i).at(j).size()>2){
                 std::cout << this->matrice_adj.at(i).at(j).at(2)<<"2";
             }else{
-            std::cout << this->matrice_adj.at(i).at(j).at(0)<<" ";
+                if(this->matrice_adj.at(i).at(j).size()>0)
+                    std::cout << this->matrice_adj.at(i).at(j).at(0)<<" ";
             }
         }
         std::cout << std::endl;
@@ -117,7 +119,8 @@ void Graphe::affichage()
             if(this->matrice_adj.at(i).at(j).size()>3){
                 std::cout << this->matrice_adj.at(i).at(j).at(3)<<"3";
             }else{
-            std::cout << this->matrice_adj.at(i).at(j).at(0)<<" ";
+                 if(this->matrice_adj.at(i).at(j).size()>0)
+                    std::cout << this->matrice_adj.at(i).at(j).at(0)<<" ";
             }
         }
         std::cout << std::endl;
@@ -144,7 +147,7 @@ bool Graphe::checkDerterminisme(std::vector<int> &fusion){
     fusion.clear();
     bool ret = true;
     for(int i = this->matrice_adj.size()-1;i>=0;i--){
-        for( int j = this->matrice_adj.size()-1;j>i;j--){
+        for( int j = this->matrice_adj.size()-1;j>=0;j--){
             for( int d = 0;d<this->matrice_adj.at(i).at(j).size();d++){
                 if(this->matrice_adj.at(i).at(j).at(d)!='$'){
                     if(!(listSymbole.empty())&&fusion.empty()){
@@ -203,10 +206,6 @@ bool Graphe::checkZeroRever(std::vector<int> &fusion){
 std::vector<std::vector<std::vector<char>>> Graphe::fusionNoeud(std::vector<int> &fusion){
     //fonction permettant de fusionner deux noeud en ajoutant les arc qui vont et qui vienne sur B a A puis en supprimant B4
     std::vector<std::vector<std::vector<char>>> ret;
-    for(int it = 0 ; it<fusion.size(); it++){
-        std::cout<<fusion.at(it);
-    }
-    std::cout<<std::endl;
     int rece = fusion.at(0);
         int supp = fusion.at(1);
         for(int i = 0;i<this->matrice_adj.size();i++){
@@ -217,19 +216,16 @@ std::vector<std::vector<std::vector<char>>> Graphe::fusionNoeud(std::vector<int>
                 for( int d = 0;d<this->matrice_adj.at(i).at(j).size();d++){
                     ret.at(i).at(j).push_back(this->matrice_adj.at(i).at(j).at(d));
                     if(i==supp){
+                        ret.at(rece).at(j)=Union(ret.at(rece).at(j),ret.at(i).at(j));
+                        ret.at(j).at(rece)=Union(ret.at(j).at(rece),ret.at(j).at(i));
 
-                        ret.at(rece).at(j)=Union(ret.at(rece).at(j),this->matrice_adj.at(i).at(j));
-                        ret.at(j).at(rece)=Union(ret.at(j).at(rece),this->matrice_adj.at(j).at(i));
                     }
                 }
             }
         }
 
-ret.at(rece).at(rece)=Union(ret.at(rece).at(rece),ret.at(rece).at(supp));
-ret.at(rece).at(rece)=Union(ret.at(rece).at(rece),ret.at(supp).at(rece));
-        /*for(int i = 0;i<ret.at(rece).size();i++){
-            ret.at(rece).at(i)=Union(ret.at(rece).at(i),ret.at(supp).at(i)); ;
-        }*/
+        ret.at(rece).at(rece)=Union(ret.at(rece).at(rece),ret.at(rece).at(supp));
+        ret.at(rece).at(rece)=Union(ret.at(rece).at(rece),ret.at(supp).at(rece));
         ret.erase(ret.begin()+supp);
         for(int i = 0;i<ret.at(0).size();i++){
             ret.at(i).erase(ret.at(i).begin()+supp);
@@ -250,36 +246,36 @@ ret.at(rece).at(rece)=Union(ret.at(rece).at(rece),ret.at(supp).at(rece));
             }
         std::sort(newFinals.begin(),newFinals.end());
         this->setFinals(newFinals);
-        fusion=this->getFinals();
-        for(int it = 0 ; it<fusion.size(); it++){
-            std::cout<<fusion.at(it);
-        }
-        std::cout<<"final"<<std::endl;
-
+        //this->affichage();
         return ret;
 }
 std::vector<char> clearDols(std::vector<char> list){
     if(list.size()>1){
-    for(int i= 0;i<list.size();i++){
-        if(list.at(i)=='$')
-            list.erase(list.begin()+i);
-    }}
+        for(int i= 0;i<list.size();i++){
+            if(list.at(i)=='$')
+                list.erase(list.begin()+i);
+        }
+    }
     return list;
 
 
 }
 
 std::vector<char> Graphe::Union(std::vector<char> l1, std::vector<char> l2){
+    std::vector<char> ret = l1;
     for(char elt : l2){
         if(elt!='$'){
             if(std::find(l1.begin(),l1.end(),elt)==l1.end()){
-                l1.push_back(elt);
+                ret.push_back(elt);
             }
         }
 
     }
-    l1 = clearDols(l1);
-    return l1;
+    //l1 = clearDols(l1);
+    if(ret.size()==0){
+        ret.push_back('$');
+    }
+    return ret;
 }
 
 string Graphe::affichageUI()
@@ -327,24 +323,18 @@ void Graphe::rendreZR(int maxTour){
             if( checkZeroRever(noeudFusion)){
                     fin = false;
             }else{
-                std::cout<< "non ZR"<<std::endl;
+                //std::cout<< "non ZR"<<std::endl;
                 this->setMatrice_adj(this->fusionNoeud(noeudFusion));
-                this->setMatrice_adj(this->doublon());
-
             }
         }else{
-            std::cout<< "non one final"<<std::endl;
+            //std::cout<< "non one final"<<std::endl;
             this->matrice_adj = this->fusionNoeud(noeudFusion);
-            this->setMatrice_adj(this->doublon());
-
         }
     }else{
-    std::cout<< "non deterministe"<<std::endl;
+    //std::cout<< "non deterministe"<<std::endl;
     this->setMatrice_adj(this->fusionNoeud(noeudFusion));
-    this->setMatrice_adj(this->doublon());
-
     }
-   std::cout<<this->affichageUI();
+    //std::cout<<this->affichageUI();
     compt++;
     noeudFusion.clear();
     }
@@ -354,4 +344,5 @@ Graphe::Graphe(){
     this->alphabet.clear();
     this->dictionaire.clear();
     this->matrice_adj.clear();
+    this->setFinals(std::vector<int>(1,0));
 }

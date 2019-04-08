@@ -16,7 +16,7 @@ View::View(QWidget *parent) :
     connect(ui->button_forward, SIGNAL(clicked()), this, SLOT(step_forward()));
     connect(ui->button_backward, SIGNAL(clicked()), this, SLOT(step_backward()));
     connect(ui->button_finish, SIGNAL(clicked()), this, SLOT(finish()));
-
+    connect(ui->b_clear,SIGNAL(clicked()), this, SLOT(clear()));
 
 }
 
@@ -76,6 +76,31 @@ void View::generer_graphe(){
 
 }
 
+void View::maj_alphabet()
+{
+    for(string mot : this->graphe.getDictionaire()){
+        for( char& c : mot){
+            if(!this->dans_alphabet(c)){
+                std::vector<char> tmp = this->graphe.getAlphabet();
+                tmp.push_back(c);
+                sort(tmp.begin(), tmp.end());
+                this->graphe.setAlphabet(tmp);
+            }
+        }
+    }
+    this->setAlphabet(this->graphe.getAlphabet());
+}
+
+bool View::dans_alphabet(char car)
+{
+    for(char c : this->graphe.getAlphabet()){
+        if( c == car){
+            return true;
+        }
+    }
+    return false;
+}
+
 
 
 View::~View()
@@ -107,7 +132,9 @@ void View::ajouter_mot(){
     tmp.push_back(test);
     this->graphe.setDictionaire(tmp);
 
-    //this->generer_graphe();
+    ui->LE_ajout_mot->clear();
+    this->maj_alphabet();
+    this->generer_graphe();
 
 }
 
@@ -124,5 +151,12 @@ void View::step_backward(){
 void View::finish(){
     this->graphe.rendreZR(999);
     this->generer_graphe();
+}
+
+void View::clear(){
+    this->graphe = Graphe();
+    this->generer_graphe();
+    this->setAlphabet(std::vector<char>());
+    this->setDictionnaire(std::vector<string>());
 }
 
